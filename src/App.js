@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
-
-const API_HOST = process.env.API_HOST ||'http://localhost:4000'
 const HTTPStatus = require('http-status');
 
 class App extends Component {
@@ -32,7 +30,7 @@ class DomainInput extends Component {
   }
 
   updateDnsInfo(domain) {
-    const dataUrl = API_HOST + '?domain=' + domain;
+    const dataUrl = '/api/?domain=' + domain;
     axios.get(dataUrl)
     .then(response => this.setState(response.data))
     .catch(function (error) {
@@ -120,11 +118,11 @@ class RequestButton extends Component {
 
   handleClick() {
     this.setState({response:'...'})
-    let path = '/curl'
+    let path = '/api/curl'
     if(this.props.type === 'curl-ssl') {
-      path = '/curl-ssl'
+      path = '/api/curl-ssl'
     }
-    const dataUrl = API_HOST + path + '?domain=' + this.props.domain;
+    const dataUrl = path + '?domain=' + this.props.domain;
     axios.get(dataUrl)
     .then(response => this.handleResponse(response.data))
     .catch(function (error) {
@@ -135,7 +133,7 @@ class RequestButton extends Component {
   handleResponse(data) {
     let response  = "$ curl -I " + data.url + "\n"
     if(data.error) {
-       response += "ERROR \N"
+       response += "ERROR \n"
        response += JSON.stringify(data.error, null, 2)
     }
     if(data.status) {
