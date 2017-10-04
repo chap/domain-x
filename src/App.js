@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
+const API_URL = 'https://domain-x-api.herokuapp.com';
+// const API_URL = 'http://localhost:4000';
 const HTTPStatus = require('http-status');
 
 class App extends Component {
@@ -30,7 +32,7 @@ class DomainInput extends Component {
   }
 
   updateDnsInfo(domain) {
-    const dataUrl = '/api/?domain=' + domain;
+    const dataUrl = API_URL + '/api/?domain=' + domain;
     axios.get(dataUrl)
     .then(response => this.setState(response.data))
     .catch(function (error) {
@@ -118,9 +120,9 @@ class RequestButton extends Component {
 
   handleClick() {
     this.setState({response:'...'})
-    let path = '/api/curl'
+    let path = API_URL+ '/api/curl'
     if(this.props.type === 'curl-ssl') {
-      path = '/api/curl-ssl'
+      path += '-ssl'
     }
     const dataUrl = path + '?domain=' + this.props.domain;
     axios.get(dataUrl)

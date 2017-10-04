@@ -1,8 +1,12 @@
 {
   "root": "build/",
-  "proxies": {
-    "/api/": {
-      "origin": "${API_URL}"
+  "routes": {
+      "/**": "index.html"
+  },
+  "https_only": true,
+  "headers": {
+    "/**": {
+      "Strict-Transport-Security": "max-age=7776000"
     }
   }
 }
