@@ -11,7 +11,7 @@
   },
   "proxies": {
     "/api/": {
-      "origin": "${API_URL}"
+      "origin": "https://domain-x-api.herouapp.com"
     }
   }
 }
