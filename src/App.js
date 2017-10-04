@@ -115,7 +115,14 @@ class RequestButton extends Component {
     super(props);
     this.handleClick = this.handleClick.bind(this);
     this.handleResponse = this.handleResponse.bind(this);
-    this.state = {result:null};
+    this.state = {domain:props.domain, response:null};
+  }
+
+  // not sure why I need this
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.domain !== this.props.domain) {
+      this.setState({domain:nextProps.domain, response:null});
+    }
   }
 
   handleClick() {
@@ -145,7 +152,7 @@ class RequestButton extends Component {
        response += "Location: " + data.location + "\n"
     }
     if(data['content-type']) {
-       response += "Content-Length: " + data['content-type'] + "\n"
+       response += "Content-Type: " + data['content-type'] + "\n"
     }
     if(data.date) {
        response += "Date: " + data.date
@@ -170,11 +177,6 @@ class RequestButton extends Component {
 
 
 class RequestResponse extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {visibility:'hide'};
-  }
-
   render() {
     if(this.props.response) {
       return (
