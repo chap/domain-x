@@ -67,12 +67,12 @@ class DnsInfo extends Component {
       infoTable = <LineItem value={this.props.dns_provider} description="DNS Provider" />;
     }
     if(this.props.records) {
-      records = this.props.records.map(function(record){
+      records = this.props.records.map(function(record, index){
         if(['NS','MX','SOA','TXT'].includes(record.type)) {
           // skip for now
           return null
         } else {
-          return <LineItem value={record.value ? record.value : record.address} raw={record} description={record.type} />;
+          return <LineItem value={record.value ? record.value : record.address} raw={record} description={record.type} key={index} />;
         }
       })
     }
