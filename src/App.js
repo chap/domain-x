@@ -18,23 +18,36 @@ class DomainInput extends Component {
     super(props);
     this.handleKeyUp = this.handleKeyUp.bind(this);
     this.updateDnsInfo = this.updateDnsInfo.bind(this);
-    this.state = {};
+    this.updateWhoisInfo = this.updateWhoisInfo.bind(this);
+    this.state = {dns:null, whois:null, domain:null};
   }
 
   handleKeyUp(event) {
     const v = event.target.value;
-    if (validDomain(v)) {
-      this.updateDnsInfo(v);
-    } else {
-      const b = {};
-      this.setState(b);
+    if (v !== this.state.domain) {
+      if (validDomain(v)) {
+        this.setState({domain:v})
+        this.updateDnsInfo(v);
+        this.updateWhoisInfo(v);
+      } else {
+        this.setState({dns:null, whois:null, domain:null});
+      }
     }
   }
 
   updateDnsInfo(domain) {
     const dataUrl = API_URL + '/api/?domain=' + domain;
     axios.get(dataUrl)
-    .then(response => this.setState(response.data))
+    .then(response => this.setState({dns: response.data}))
+    .catch(function (error) {
+      console.log(error);
+    })
+  }
+
+  updateWhoisInfo(domain) {
+    const dataUrl = API_URL + '/api/whois?domain=' + domain;
+    axios.get(dataUrl)
+    .then(response => this.setState({whois: response.data}))
     .catch(function (error) {
       console.log(error);
     })
@@ -42,8 +55,13 @@ class DomainInput extends Component {
 
   render() {
     let dnsInfo = '';
-    if (this.state.domain) {
-      dnsInfo = <DnsInfo domain={this.state.domain} dns_provider={this.state.dns_provider} records={this.state.records} />;
+    if (this.state.dns) {
+      dnsInfo = <DnsInfo
+        domain={this.state.dns.domain}
+        dns_provider={this.state.dns.dns_provider}
+        whois={this.state.whois}
+        records={this.state.dns.records}
+      />;
     }
 
     return (
@@ -61,10 +79,18 @@ class DomainInput extends Component {
 
 class DnsInfo extends Component {
   render() {
-    let infoTable = '';
+    let dnsProvider = '';
+    let whoisRegistrar = '';
     let records = '';
+    let curlButton = '';
+    let curlSSLButton = '';
     if(this.props.dns_provider) {
-      infoTable = <LineItem value={this.props.dns_provider} description="DNS Provider" />;
+      dnsProvider = <LineItem value={this.props.dns_provider} description="DNS Provider" />;
+      curlButton = <RequestButton name="curl" type="curl" domain={this.props.domain} />;
+      curlSSLButton = <RequestButton name="curl SSL" type="curl-ssl" domain={this.props.domain} />;
+    }
+    if(this.props.whois) {
+      whoisRegistrar = <LineItem value={this.props.whois.registrar} description="Registrar" />;
     }
     if(this.props.records) {
       records = this.props.records.map(function(record, index){
@@ -79,12 +105,13 @@ class DnsInfo extends Component {
     return (
       <div>
         <div className="dt w-100 mb3 hk-hide-bb-last-row">
-          {infoTable}
+          {dnsProvider}
+          {whoisRegistrar}
           {records}
         </div>
-        <RequestButton name="curl" type="curl" domain={this.props.domain} />
+        {curlButton}
         &nbsp;
-        <RequestButton name="curl SSL" type="curl-ssl" domain={this.props.domain} />
+        {curlSSLButton}
       </div>
     );
   }
