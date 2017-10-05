@@ -70,6 +70,8 @@ class DomainInput extends Component {
                placeholder="domain.com"
                className="flex-auto hk-input w-100"
                onKeyUp={this.handleKeyUp}
+               autocorrect="off"
+               autocapitalize="none"
                />
         {dnsInfo}
       </div>
